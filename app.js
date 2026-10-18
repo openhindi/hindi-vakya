@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * Hindi Vakya — Single Game: Word Bridge & Vocabulary Stats
+ * Hindi Vakya — Single Game: Word Bridge & Completed Vocabulary Stats
  * Minimal black and white theme, mobile-first design.
  */
 
@@ -24,15 +24,13 @@
   // Word Bridge Game State
   let currentSentence = null;
   let placedIndices = []; // array of original indices in sentence.words
-  let shuffledPool = []; // array of { word, origIndex, isDistractor }
+  let shuffledPool = []; // array of { word, origIndex, isDistractor, meaning }
   let roundCompleted = false;
 
   // Stats table state
-  let currentFilter = "all"; // 'all' | 'done' | 'pending'
-  let searchQuery = "";
   let renderedWordCount = 0;
   const WORDS_CHUNK_SIZE = 100;
-  let filteredVocabCache = [];
+  let completedWordsCache = [];
 
   // DOM Elements cache
   const dom = {};
@@ -42,15 +40,13 @@
     [
       "tab-play-btn", "tab-stats-btn",
       "view-play", "view-stats",
-      "summary-sentences-count", "summary-words-count",
+      "titlebar-sentences-count",
       "btn-prev-sentence", "btn-next-sentence",
       "sentence-index-label", "sentence-completed-badge",
       "btn-toggle-hint",
       "en-sentence-text", "bridge-slots", "bridge-chips",
-      "round-complete-banner", "btn-advance-sentence",
       // Stats
       "stats-words-count", "stats-progress-bar",
-      "stats-search-input", "filter-all-btn", "filter-done-btn", "filter-pending-btn",
       "words-table-body", "table-load-more", "table-status-text",
       "btn-reset-stats",
       // Dialog
@@ -105,7 +101,6 @@
   }
 
   function countUniqueWordsCompleted() {
-    // 4 words per completed sentence
     let count = 0;
     for (let id = 1; id <= 1200; id++) {
       if (isSentenceCompleted(id)) count += 4;
@@ -114,7 +109,7 @@
   }
 
   /* ---------------------------------------------------------------------
-   * Data Loading
+   * Data Loading & Dictionary
    * ------------------------------------------------------------------- */
   async function fetchJson(path) {
     const res = await fetch(path);
@@ -123,7 +118,6 @@
   }
 
   async function initData() {
-    // Load vocab.json and all 3 phrases JSON files in parallel
     const [vocabData, phrases1, phrases2, phrases3] = await Promise.all([
       fetchJson("data/vocab.json"),
       fetchJson("data/phrases01.json"),
@@ -139,7 +133,6 @@
     });
 
     const allPhrases = [...phrases1, ...phrases2, ...phrases3];
-    // Sort by id to ensure strictly sequential ordering
     allPhrases.sort((a, b) => a.id - b.id);
 
     sentences = allPhrases.map(p => ({
@@ -151,7 +144,6 @@
 
     loadSavedProgress();
 
-    // Determine initial active sentence
     const savedId = userProgress.lastSentenceId || 1;
     activeSentenceIndex = Math.max(0, Math.min(savedId - 1, sentences.length - 1));
 
@@ -161,9 +153,15 @@
 
   function getWordMeaning(hindiWord) {
     if (!hindiWord) return "";
-    const clean = hindiWord.replace(/[^\w\u0900-\u097F]/g, "").trim();
+    const clean = hindiWord.trim();
     if (vocabMap.has(clean)) return vocabMap.get(clean);
-    if (vocabMap.has(hindiWord)) return vocabMap.get(hindiWord);
+
+    // Stem match for inflected verb/adjective forms (e.g. गया -> जाना, गाती -> गाना, बड़े -> बड़ा)
+    for (const [vHi, vEn] of vocabMap.entries()) {
+      if (clean.startsWith(vHi.slice(0, Math.max(2, vHi.length - 1)))) {
+        return vEn;
+      }
+    }
     return "";
   }
 
@@ -179,6 +177,14 @@
     return arr;
   }
 
+  function setHintsState(enabled) {
+    hintsEnabled = enabled;
+    if (dom.btnToggleHint) {
+      dom.btnToggleHint.classList.toggle("active", hintsEnabled);
+    }
+    document.body.classList.toggle("show-hints", hintsEnabled);
+  }
+
   function loadSentence(index) {
     if (index < 0 || index >= sentences.length) return;
     activeSentenceIndex = index;
@@ -189,21 +195,21 @@
     roundCompleted = false;
     placedIndices = [];
 
-    // Update navigation buttons
+    // Hint must go off automatically on sentence change
+    setHintsState(false);
+
+    // Navigation buttons
     dom.btnPrevSentence.disabled = (index === 0);
     dom.btnNextSentence.disabled = (index === sentences.length - 1);
 
-    // Update Meta
-    dom.sentenceIndexLabel.textContent = `Sentence ${currentSentence.id} / ${sentences.length}`;
+    // Meta: simply "1 / 1200"
+    dom.sentenceIndexLabel.textContent = `${currentSentence.id} / ${sentences.length}`;
     const times = userProgress.completedSentences[currentSentence.id] || 0;
     dom.sentenceCompletedBadge.textContent = `${times}x`;
     dom.sentenceCompletedBadge.classList.toggle("done", times > 0);
 
     // English text
     dom.enSentenceText.textContent = currentSentence.en;
-
-    // Hide complete banner
-    dom.roundCompleteBanner.hidden = true;
 
     // Pick 1-2 distractor words from a different sentence
     const words = currentSentence.words;
@@ -221,11 +227,13 @@
     const pool = words.map((w, idx) => ({
       word: w,
       origIndex: idx,
-      isDistractor: false
+      isDistractor: false,
+      meaning: getWordMeaning(w)
     })).concat(distractorCandidates.map((dw, dIdx) => ({
       word: dw,
       origIndex: -100 - dIdx,
-      isDistractor: true
+      isDistractor: true,
+      meaning: getWordMeaning(dw) // Hint shown for distractors too!
     })));
 
     shuffledPool = shuffle(pool);
@@ -236,14 +244,13 @@
 
   function renderSlots() {
     const words = currentSentence.words;
+    // Slots display ONLY Hindi text without English hints
     dom.bridgeSlots.innerHTML = words.map((w, idx) => {
       const isFilled = placedIndices.includes(idx);
-      const meaning = getWordMeaning(w);
       if (isFilled) {
         return `
           <div class="bridge-slot filled good" data-slot-idx="${idx}">
             <span class="slot-hi-text">${w}</span>
-            <span class="slot-en-gloss">${meaning}</span>
           </div>
         `;
       }
@@ -256,13 +263,13 @@
   }
 
   function renderChips() {
+    // English gloss hint is rendered here in chips area only
     dom.bridgeChips.innerHTML = shuffledPool.map((item, i) => {
       const isUsed = !item.isDistractor && placedIndices.includes(item.origIndex);
-      const meaning = getWordMeaning(item.word);
       return `
         <button type="button" class="word-chip ${isUsed ? 'used' : ''}" data-chip-idx="${i}">
           <span class="chip-hi-text">${item.word}</span>
-          <span class="chip-en-gloss">${meaning}</span>
+          <span class="chip-en-gloss">${item.meaning || ''}</span>
         </button>
       `;
     }).join("");
@@ -305,21 +312,17 @@
     dom.sentenceCompletedBadge.textContent = `${times}x`;
     dom.sentenceCompletedBadge.classList.add("done");
     updateAllSummaries();
-
-    // Show completion banner - stays on current sentence until user clicks Next!
-    dom.roundCompleteBanner.hidden = false;
   }
 
   /* ---------------------------------------------------------------------
-   * Stats & Words Table Rendering (Chunked / Lazy Loaded)
+   * Stats & Completed Words Table Rendering
    * ------------------------------------------------------------------- */
   function updateAllSummaries() {
     const sDone = countUniqueSentencesCompleted();
     const wDone = countUniqueWordsCompleted();
 
-    // Play View summary
-    dom.summarySentencesCount.textContent = sDone;
-    dom.summaryWordsCount.textContent = wDone;
+    // Header Titlebar summary
+    dom.titlebarSentencesCount.textContent = sDone;
 
     // Stats View hero
     dom.statsWordsCount.textContent = wDone;
@@ -327,41 +330,36 @@
     dom.statsProgressBar.style.width = `${pct}%`;
   }
 
-  function applyStatsFilters() {
-    const q = searchQuery.toLowerCase().trim();
-    filteredVocabCache = vocab.filter(item => {
-      const done = isWordCompleted(item.id);
-      if (currentFilter === "done" && !done) return false;
-      if (currentFilter === "pending" && done) return false;
-
-      if (q) {
-        const matchesHi = item.hi && item.hi.toLowerCase().includes(q);
-        const matchesEn = item.en && item.en.toLowerCase().includes(q);
-        return matchesHi || matchesEn;
-      }
-      return true;
-    });
-
+  function renderCompletedWords() {
+    completedWordsCache = vocab.filter(item => isWordCompleted(item.id));
     renderedWordCount = 0;
     dom.wordsTableBody.innerHTML = "";
-    loadMoreWords();
-  }
 
-  function loadMoreWords() {
-    if (renderedWordCount >= filteredVocabCache.length) {
-      dom.tableStatusText.textContent = filteredVocabCache.length === 0
-        ? "No matching vocabulary found."
-        : `Showing all ${filteredVocabCache.length} words`;
+    if (completedWordsCache.length === 0) {
+      dom.wordsTableBody.innerHTML = `
+        <tr>
+          <td colspan="3" class="empty-cell">No completed words yet. Play sentences to complete words!</td>
+        </tr>
+      `;
+      dom.tableLoadMore.hidden = true;
       return;
     }
 
-    const nextBatch = filteredVocabCache.slice(renderedWordCount, renderedWordCount + WORDS_CHUNK_SIZE);
+    loadMoreCompletedWords();
+  }
+
+  function loadMoreCompletedWords() {
+    if (renderedWordCount >= completedWordsCache.length) {
+      // All loaded: keep footer hidden (no "Showing all X completed words" message)
+      dom.tableLoadMore.hidden = true;
+      return;
+    }
+
+    const nextBatch = completedWordsCache.slice(renderedWordCount, renderedWordCount + WORDS_CHUNK_SIZE);
     const fragment = document.createDocumentFragment();
 
     nextBatch.forEach(item => {
       const tr = document.createElement("tr");
-      const done = isWordCompleted(item.id);
-
       tr.innerHTML = `
         <td class="col-no">${item.id}</td>
         <td class="col-word">
@@ -371,10 +369,9 @@
           </div>
         </td>
         <td class="col-done">
-          ${done
-            ? '<span class="tick-badge" title="Completed"><svg class="icon icon-done"><use href="#i-check"/></svg></span>'
-            : '<span class="tick-empty">&bull;</span>'
-          }
+          <span class="tick-badge" title="Completed">
+            <svg class="icon icon-done"><use href="#i-check"/></svg>
+          </span>
         </td>
       `;
       fragment.appendChild(tr);
@@ -383,10 +380,12 @@
     dom.wordsTableBody.appendChild(fragment);
     renderedWordCount += nextBatch.length;
 
-    if (renderedWordCount < filteredVocabCache.length) {
-      dom.tableStatusText.textContent = `Showing ${renderedWordCount} of ${filteredVocabCache.length} words (Scroll down for more)`;
+    // Only show footer indicator while more records exist to be scrolled
+    if (renderedWordCount < completedWordsCache.length) {
+      dom.tableLoadMore.hidden = false;
+      dom.tableStatusText.textContent = `Scroll down for more (${renderedWordCount} / ${completedWordsCache.length})`;
     } else {
-      dom.tableStatusText.textContent = `Showing all ${filteredVocabCache.length} words`;
+      dom.tableLoadMore.hidden = true;
     }
   }
 
@@ -415,9 +414,9 @@
       dom.viewPlay.hidden = true;
       dom.viewPlay.classList.remove("active");
 
-      // Render stats view
+      // Render stats view with completed words only
       updateAllSummaries();
-      applyStatsFilters();
+      renderCompletedWords();
     }
   }
 
@@ -439,18 +438,29 @@
       }
     });
 
-    // Advance button from completion banner
-    dom.btnAdvanceSentence.addEventListener("click", () => {
-      if (activeSentenceIndex < sentences.length - 1) {
-        loadSentence(activeSentenceIndex + 1);
-      }
-    });
-
     // Hint toggle button
     dom.btnToggleHint.addEventListener("click", () => {
-      hintsEnabled = !hintsEnabled;
-      dom.btnToggleHint.classList.toggle("active", hintsEnabled);
-      document.body.classList.toggle("show-hints", hintsEnabled);
+      setHintsState(!hintsEnabled);
+    });
+
+    // Keyboard navigation: Left Arrow -> Previous, Right Arrow -> Next
+    window.addEventListener("keydown", e => {
+      // Only navigate when Play tab is active and not inside input/dialog
+      if (document.activeElement && ["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
+      if (dom.appDialog && dom.appDialog.open) return;
+      if (!dom.viewPlay || dom.viewPlay.hidden) return;
+
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        if (activeSentenceIndex > 0) {
+          loadSentence(activeSentenceIndex - 1);
+        }
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        if (activeSentenceIndex < sentences.length - 1) {
+          loadSentence(activeSentenceIndex + 1);
+        }
+      }
     });
 
     // Chips click handler
@@ -467,33 +477,10 @@
       tableContainer.addEventListener("scroll", () => {
         const { scrollTop, scrollHeight, clientHeight } = tableContainer;
         if (scrollTop + clientHeight >= scrollHeight - 80) {
-          loadMoreWords();
+          loadMoreCompletedWords();
         }
       });
     }
-
-    // Search input
-    let searchDebounceTimer = null;
-    dom.statsSearchInput.addEventListener("input", e => {
-      clearTimeout(searchDebounceTimer);
-      searchDebounceTimer = setTimeout(() => {
-        searchQuery = e.target.value;
-        applyStatsFilters();
-      }, 200);
-    });
-
-    // Filter pills
-    const pillButtons = [dom.filterAllBtn, dom.filterDoneBtn, dom.filterPendingBtn];
-    function setFilterActive(btn, filter) {
-      pillButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      currentFilter = filter;
-      applyStatsFilters();
-    }
-
-    dom.filterAllBtn.addEventListener("click", () => setFilterActive(dom.filterAllBtn, "all"));
-    dom.filterDoneBtn.addEventListener("click", () => setFilterActive(dom.filterDoneBtn, "done"));
-    dom.filterPendingBtn.addEventListener("click", () => setFilterActive(dom.filterPendingBtn, "pending"));
 
     // Reset button
     dom.btnResetStats.addEventListener("click", () => {
@@ -507,7 +494,7 @@
       };
       saveProgress();
       updateAllSummaries();
-      applyStatsFilters();
+      renderCompletedWords();
       loadSentence(0);
       dom.appDialog.close();
     });

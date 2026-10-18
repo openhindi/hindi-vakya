@@ -14,11 +14,6 @@
   <!-- SVG Icons -->
   <svg width="0" height="0" style="position:absolute; display:none" aria-hidden="true" focusable="false">
     <defs>
-      <symbol id="i-hint" viewBox="0 0 24 24">
-        <path d="M9 18h6M10 22h4" stroke-width="2" stroke-linecap="round"/>
-        <path d="M12 2a7 7 0 0 0-7 7c0 2.6 1.4 4.8 3.5 6 .6.3 1 1 1 1.7V17h5v-.3c0-.7.4-1.4 1-1.7 2.1-1.2 3.5-3.4 3.5-6a7 7 0 0 0-7-7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M12 6v3M10.5 7.5l3 0" stroke-width="1.8" stroke-linecap="round"/>
-      </symbol>
       <symbol id="i-check" viewBox="0 0 24 24">
         <polyline points="20 6 9 17 4 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
       </symbol>
@@ -26,11 +21,18 @@
   </svg>
 
   <div class="app-container">
-    <!-- Header -->
+    <!-- Header / Titlebar with center-aligned progress -->
     <header class="app-header">
       <div class="brand">
         <h1 class="brand-title" lang="hi">हिंदी वाक्य</h1>
       </div>
+
+      <!-- Centered Progress Badge -->
+      <div class="header-sentence-stat" title="Unique Sentences Completed">
+        <span class="stat-prefix">Progress:</span>
+        <strong id="titlebar-sentences-count">0</strong><span class="stat-sep">/</span>1200
+      </div>
+
       <nav class="tab-nav">
         <button id="tab-play-btn" class="tab-btn active" type="button" aria-controls="view-play" aria-selected="true">Play</button>
         <button id="tab-stats-btn" class="tab-btn" type="button" aria-controls="view-stats" aria-selected="false">Stats</button>
@@ -40,29 +42,16 @@
     <main class="app-main">
       <!-- PLAY VIEW -->
       <section id="view-play" class="view-panel active" aria-label="Game Play">
-        <div class="play-summary-banner">
-          <div class="summary-item">
-            <span class="summary-label">Sentences</span>
-            <span class="summary-val"><strong id="summary-sentences-count">0</strong> / 1200</span>
-          </div>
-          <div class="summary-item">
-            <span class="summary-label">Words</span>
-            <span class="summary-val"><strong id="summary-words-count">0</strong> / 4800</span>
-          </div>
-        </div>
-
         <div class="game-card">
           <!-- Game Header / Navigation -->
           <div class="game-nav-bar">
             <button id="btn-prev-sentence" class="btn btn-icon" type="button" aria-label="Previous sentence" title="Previous">&#x25C0;</button>
             <div class="sentence-meta">
-              <span id="sentence-index-label" class="sentence-index">Sentence 1 / 1200</span>
+              <span id="sentence-index-label" class="sentence-index">1 / 1200</span>
               <span id="sentence-completed-badge" class="completed-badge" title="Completion Count">0x</span>
             </div>
             <div class="game-hud-actions">
-              <button id="btn-toggle-hint" class="btn btn-icon" type="button" aria-label="Toggle Hint" title="Hint">
-                <svg class="icon"><use href="#i-hint"/></svg>
-              </button>
+              <button id="btn-toggle-hint" class="btn btn-icon btn-hint-unicode" type="button" aria-label="Toggle Hint" title="Hint">&#x1F4A1;</button>
               <button id="btn-next-sentence" class="btn btn-icon" type="button" aria-label="Next sentence" title="Next">&#x25B6;</button>
             </div>
           </div>
@@ -72,23 +61,14 @@
             <p id="en-sentence-text" class="en-text">Loading...</p>
           </div>
 
-          <!-- Hindi Slots -->
+          <!-- Hindi Slots (Center Aligned, no hints) -->
           <div class="slots-area">
             <div id="bridge-slots" class="bridge-slots"></div>
           </div>
 
-          <!-- Word Chips Pool -->
+          <!-- Word Chips Pool (Center Aligned, hints show here only) -->
           <div class="chips-area">
             <div id="bridge-chips" class="bridge-chips"></div>
-          </div>
-
-          <!-- Celebration banner (appears when round is completed) -->
-          <div id="round-complete-banner" class="round-complete-banner" hidden>
-            <div class="complete-message">
-              <svg class="icon icon-done"><use href="#i-check"/></svg>
-              <span>Sentence Completed!</span>
-            </div>
-            <button id="btn-advance-sentence" class="btn btn-primary" type="button">Next Sentence &#x2192;</button>
           </div>
         </div>
       </section>
@@ -98,24 +78,14 @@
         <div class="stats-summary-banner">
           <div class="stats-summary-left">
             <span class="stats-hero-label">Vocabulary Progress</span>
-            <div class="stats-hero-val"><strong id="stats-words-count">0</strong> / 4800 words completed</div>
+            <div class="stats-hero-val"><strong id="stats-words-count">0</strong> / 4800 completed</div>
           </div>
           <div class="stats-progress-track">
             <div id="stats-progress-bar" class="stats-progress-fill" style="width: 0%;"></div>
           </div>
         </div>
 
-        <!-- Filter Controls -->
-        <div class="table-controls">
-          <input id="stats-search-input" type="text" class="search-input" placeholder="Search Hindi or English word..." />
-          <div class="filter-toggles">
-            <button id="filter-all-btn" class="pill-btn active" type="button">All</button>
-            <button id="filter-done-btn" class="pill-btn" type="button">Done</button>
-            <button id="filter-pending-btn" class="pill-btn" type="button">Pending</button>
-          </div>
-        </div>
-
-        <!-- 3-Column Words Table -->
+        <!-- 3-Column Words Table (Completed Words Only) -->
         <div class="words-table-container">
           <table class="words-table">
             <thead>
@@ -126,17 +96,17 @@
               </tr>
             </thead>
             <tbody id="words-table-body">
-              <!-- Dynamically populated rows -->
+              <!-- Dynamically populated completed rows only -->
             </tbody>
           </table>
-          <div id="table-load-more" class="table-load-more">
-            <span id="table-status-text">Loading words...</span>
+          <div id="table-load-more" class="table-load-more" hidden>
+            <span id="table-status-text"></span>
           </div>
         </div>
 
         <!-- Reset Button at the bottom -->
         <div class="stats-actions-footer">
-          <button id="btn-reset-stats" class="btn btn-danger" type="button">Reset All Progress</button>
+          <button id="btn-reset-stats" class="btn btn-danger" type="button">Reset</button>
         </div>
       </section>
     </main>
@@ -149,7 +119,7 @@
       <p id="dialog-message" class="dialog-message">Are you sure you want to reset all completed sentences and word progress? This cannot be undone.</p>
       <div class="dialog-actions">
         <button id="dialog-cancel-btn" class="btn btn-secondary" value="cancel" type="submit">Cancel</button>
-        <button id="dialog-confirm-btn" class="btn btn-danger" value="confirm" type="submit">Reset Everything</button>
+        <button id="dialog-confirm-btn" class="btn btn-danger" value="confirm" type="submit">Reset</button>
       </div>
     </form>
   </dialog>
