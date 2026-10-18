@@ -210,6 +210,24 @@ body {
   gap: 8px;
 }
 
+.nav-left-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-sm-reset {
+  width: 34px;
+  height: 34px;
+  font-size: 1.15rem;
+  color: var(--text-muted);
+}
+
+.btn-sm-reset:hover {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
 .sentence-meta {
   display: flex;
   align-items: center;
@@ -448,6 +466,33 @@ body {
 
 .show-hints .chip-en-gloss {
   display: block;
+}
+
+/* Orange highlight for the 4 target vocabulary words when hint is active */
+.show-hints .word-chip.target-vocab {
+  border-color: #f97316;
+  background: rgba(249, 115, 22, 0.1);
+}
+
+.show-hints .word-chip.target-vocab .chip-hi-text {
+  color: #fb923c;
+}
+
+.show-hints .word-chip.target-vocab .chip-en-gloss {
+  color: #fdba74;
+}
+
+@media (prefers-color-scheme: light) {
+  .show-hints .word-chip.target-vocab {
+    border-color: #ea580c;
+    background: rgba(234, 88, 12, 0.08);
+  }
+  .show-hints .word-chip.target-vocab .chip-hi-text {
+    color: #c2410c;
+  }
+  .show-hints .word-chip.target-vocab .chip-en-gloss {
+    color: #9a3412;
+  }
 }
 
 /* Shake Animation for bad taps */

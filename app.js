@@ -41,7 +41,7 @@
       "tab-play-btn", "tab-stats-btn",
       "view-play", "view-stats",
       "titlebar-sentences-count",
-      "btn-prev-sentence", "btn-next-sentence",
+      "btn-prev-sentence", "btn-next-sentence", "btn-reset-sentence",
       "sentence-index-label", "sentence-completed-badge",
       "btn-toggle-hint",
       "en-sentence-text", "bridge-slots", "bridge-chips",
@@ -224,16 +224,125 @@
       }
     }
 
-    const pool = words.map((w, idx) => ({
-      word: w,
-      origIndex: idx,
-      isDistractor: false,
-      meaning: getWordMeaning(w)
-    })).concat(distractorCandidates.map((dw, dIdx) => ({
+    // The 4 vocabulary words for sentence N are words (4N-3) to (4N)
+    const sId = currentSentence.id;
+    const targetVocabIds = [4 * sId - 3, 4 * sId - 2, 4 * sId - 1, 4 * sId];
+    const targetVocabItems = targetVocabIds.map(vid => vocab[vid - 1]).filter(Boolean);
+
+    /**
+     * Generates the precise set of allowed inflections for a target Hindi root word,
+     * mirroring scripts/validate_phrases.py.
+     */
+    function getWordInflections(rawWord) {
+      const w = rawWord.trim();
+      const candidates = new Set([w]);
+
+      // 1. Common noun / adjective inflections (-ा, -े, -ी)
+      if (w.endsWith("ा")) {
+        const base = w.slice(0, -1);
+        candidates.add(base + "े");
+        candidates.add(base + "ी");
+        candidates.add(base + "ों");
+      } else if (w.endsWith("े")) {
+        const base = w.slice(0, -1);
+        candidates.add(base + "ा");
+        candidates.add(base + "ी");
+        candidates.add(base + "ों");
+      } else if (w.endsWith("ी")) {
+        const base = w.slice(0, -1);
+        candidates.add(base + "ा");
+        candidates.add(base + "े");
+        candidates.add(base + "ियों");
+        candidates.add(base + "ियाँ");
+      }
+
+      // 2. Common verb inflections (-ना ending)
+      if (w.endsWith("ना")) {
+        const root = w.slice(0, -2);
+        [
+          root,
+          root + "ा", root + "ी", root + "े",
+          root + "ता", root + "ती", root + "ते",
+          root + "कर", root + "के",
+          root + "ूंगा", root + "ऊँगा", root + "एगी", root + "एगा", root + "एंगे",
+          root + "ाया", root + "ाई", root + "ाए"
+        ].forEach(f => candidates.add(f));
+
+        if (root.endsWith("ा")) {
+          const shortRoot = root.slice(0, -1);
+          [
+            shortRoot + "ाया", shortRoot + "ाई", shortRoot + "ाए",
+            shortRoot + "ाकर", shortRoot + "ाते"
+          ].forEach(f => candidates.add(f));
+        }
+      }
+
+      // 3. Irregular forms
+      const irregulars = {
+        "जाना": ["गया", "गई", "गए", "जा", "जाता", "जाती", "जाते", "जाइए", "जाओ", "जाएँ", "जाएगा", "जाएगी", "जाएंगे"],
+        "करना": ["किया", "की", "किए", "कर", "करता", "करती", "करते", "कीजिए", "करो", "करें", "करेगा", "करेगी", "करेंगे"],
+        "होना": ["था", "थी", "थे", "थीं", "हो", "होता", "होती", "होते", "हुए", "हुआ", "हुई", "होगा", "होगी", "होंगे"],
+        "देना": ["दिया", "दी", "दिए", "दे", "देता", "देती", "देते", "दीजिए", "दो", "दें", "देगा", "देगी", "देंगे"],
+        "लेना": ["लिया", "ली", "लिए", "ले", "लेता", "लेती", "लेते", "लीजिए", "लो", "लें", "लेगा", "लेगी", "लेंगे"]
+      };
+      if (irregulars[w]) {
+        irregulars[w].forEach(f => candidates.add(f));
+      }
+
+      // 4. Common plural/postposition attached forms
+      candidates.add(w + "ों");
+      candidates.add(w + "ें");
+      if (w === "को") candidates.add("सबको");
+
+      return candidates;
+    }
+
+    /**
+     * Resolves if a given word token in the sentence corresponds to one of the 4 target vocabulary items.
+     * Checks exact match first, then strict candidate inflection set.
+     */
+    function resolveTargetWordInfo(word) {
+      if (!word) return { isTarget: false, isInflected: false, baseWord: "", meaning: "" };
+      const w = word.trim();
+
+      // Priority 1: Exact root match
+      for (const tv of targetVocabItems) {
+        if (w === tv.hi.trim()) {
+          return { isTarget: true, isInflected: false, baseWord: tv.hi.trim(), meaning: tv.en.trim() };
+        }
+      }
+
+      // Priority 2: Strict inflection set match
+      for (const tv of targetVocabItems) {
+        const root = tv.hi.trim();
+        const allowedForms = getWordInflections(root);
+        if (allowedForms.has(w)) {
+          return { isTarget: true, isInflected: (w !== root), baseWord: root, meaning: tv.en.trim() };
+        }
+      }
+
+      return { isTarget: false, isInflected: false, baseWord: "", meaning: getWordMeaning(w) };
+    }
+
+    const pool = words.map((w, idx) => {
+      const info = resolveTargetWordInfo(w);
+      return {
+        word: w,
+        origIndex: idx,
+        isDistractor: false,
+        isTargetVocab: info.isTarget,
+        isInflected: info.isInflected,
+        baseWord: info.baseWord,
+        meaning: info.meaning || getWordMeaning(w)
+      };
+    }).concat(distractorCandidates.map((dw, dIdx) => ({
       word: dw,
       origIndex: -100 - dIdx,
       isDistractor: true,
-      meaning: getWordMeaning(dw) // Hint shown for distractors too!
+      isTargetVocab: false,
+      isInflected: false,
+      baseWord: "",
+      meaning: getWordMeaning(dw)
     })));
 
     shuffledPool = shuffle(pool);
@@ -263,13 +372,21 @@
   }
 
   function renderChips() {
-    // English gloss hint is rendered here in chips area only
+    // English gloss hint and target-vocab highlight is rendered here in chips area only
     dom.bridgeChips.innerHTML = shuffledPool.map((item, i) => {
       const isUsed = !item.isDistractor && placedIndices.includes(item.origIndex);
+      const isTarget = item.isTargetVocab ? "target-vocab" : "";
+      
+      // When inflected, show which base word it refers to, e.g. "is (from होना)" or "went (from जाना)"
+      let glossText = item.meaning || "";
+      if (item.isTargetVocab && item.isInflected && item.baseWord) {
+        glossText = `${glossText} (${item.baseWord})`;
+      }
+
       return `
-        <button type="button" class="word-chip ${isUsed ? 'used' : ''}" data-chip-idx="${i}">
+        <button type="button" class="word-chip ${isUsed ? 'used' : ''} ${isTarget}" data-chip-idx="${i}">
           <span class="chip-hi-text">${item.word}</span>
-          <span class="chip-en-gloss">${item.meaning || ''}</span>
+          <span class="chip-en-gloss">${glossText}</span>
         </button>
       `;
     }).join("");
@@ -436,6 +553,18 @@
       if (activeSentenceIndex < sentences.length - 1) {
         loadSentence(activeSentenceIndex + 1);
       }
+    });
+
+    // Reset current sentence completion count to zero
+    dom.btnResetSentence.addEventListener("click", () => {
+      if (!currentSentence) return;
+      const sId = currentSentence.id;
+      delete userProgress.completedSentences[sId];
+      saveProgress();
+
+      // Update badge, summaries, and reload round
+      updateAllSummaries();
+      loadSentence(activeSentenceIndex);
     });
 
     // Hint toggle button
