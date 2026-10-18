@@ -21,8 +21,8 @@
   },
   {
     "id": 5,
-    "hi": "हम सबको मिलजुलकर मुझे अपनी योजना स्पष्ट कर देनी चाहिए",
-    "en": "All of us together should make my plan clear"
+    "hi": "हम सब को खुश करने के लिए मुझे काम कर देना पड़ा",
+    "en": "In order to please everyone, I had to do the work"
   },
   {
     "id": 6,
@@ -136,13 +136,13 @@
   },
   {
     "id": 28,
-    "hi": "लोग पिता को भगवान मानते हैं क्योंकि वे सबका पालन करते",
-    "en": "People revere a father as God because he provides for all"
+    "hi": "लोग पिता को भगवान मानते हैं क्योंकि वे सबका पालन करते हैं",
+    "en": "People revere a father as God because he provides for everyone"
   },
   {
     "id": 29,
-    "hi": "आज यहाँ आने वाला अतिथि कहाँ चला गया और इसका क्या मतलब",
-    "en": "Where did the guest arriving here today go and what is the meaning of this"
+    "hi": "आज यहाँ आने वाला अतिथि कहाँ चला गया इसका क्या मतलब था",
+    "en": "Where did the guest arriving here today go, what did this mean"
   },
   {
     "id": 30,
@@ -156,8 +156,8 @@
   },
   {
     "id": 32,
-    "hi": "वीर सिपाही मैदान मार कर अपना नाम हमेशा याद रखने योग्य बनाते",
-    "en": "Brave soldiers carry the day and make their name worth remembering forever"
+    "hi": "सिपाही मैदान मार कर अपना नाम हमेशा याद रखने योग्य बनाते हैं",
+    "en": "Soldiers win the day and make their name worth remembering forever"
   },
   {
     "id": 33,
@@ -186,7 +186,7 @@
   },
   {
     "id": 38,
-    "hi": "हम उन नटखट बच्चे को माफ़ करने के लिए सदैव तैयार हैं",
+    "hi": "हम उन नटखट बच्चों को माफ़ करने के लिए सदैव तैयार हैं",
     "en": "We are always ready to forgive those naughty children"
   },
   {
@@ -236,13 +236,13 @@
   },
   {
     "id": 48,
-    "hi": "दोनों का कहना था कि नया घर ख़रीदना और उपहार देना अच्छा",
-    "en": "Both held that buying a new house and giving gifts is good"
+    "hi": "दोनों का कहना था नया घर ख़रीदना और उपहार देना अच्छा रहेगा",
+    "en": "Both believed that buying a new house and giving gifts would be good"
   },
   {
     "id": 49,
-    "hi": "क़ानून की मर्यादा में रहकर हर पुरुष परिवार में आत्मनिर्भरता ला सकता",
-    "en": "By staying within the bounds of the law, every man can bring self-reliance to the family"
+    "hi": "क़ानून मानकर हर पुरुष अपने परिवार में आत्मनिर्भरता ला सकता है",
+    "en": "By obeying the law, every man can bring self-reliance to the family"
   },
   {
     "id": 50,
@@ -386,8 +386,8 @@
   },
   {
     "id": 78,
-    "hi": "मेरी बात सुनना और भूखे का मन समझकर रोटी खिलाना",
-    "en": "Listen to my word and feed bread understanding the heart of the hungry"
+    "hi": "मेरी बात सुनना और भूखे का मन समझकर रोटी खिलाना ज़रूरी है",
+    "en": "It is essential to listen to me and feed bread understanding the heart of the hungry"
   },
   {
     "id": 79,
@@ -901,13 +901,13 @@
   },
   {
     "id": 181,
-    "hi": "लगभग टूटे हुए शीशा के आगे उसने हल्दी और दही लगाई",
-    "en": "In front of the nearly broken mirror, she applied turmeric and yogurt"
+    "hi": "लगभग टूटे हुए शीशे के आगे उसने हल्दी और दही लगाई",
+    "en": "In front of the almost broken glass, she applied turmeric and curd"
   },
   {
     "id": 182,
-    "hi": "कुआँ के मीठे पानी का सेवन करने की आकांक्षा बेशक पूरी होगी",
-    "en": "The wish to consume sweet well water will undoubtedly be fulfilled"
+    "hi": "कुएँ के मीठे पानी का सेवन करने की आकांक्षा बेशक पूरी होगी",
+    "en": "The wish to drink sweet water of the well will certainly be fulfilled"
   },
   {
     "id": 183,
@@ -941,13 +941,13 @@
   },
   {
     "id": 189,
-    "hi": "पच्चीस वर्षीय बहू का हृदय चूल्हे के धुआँ से घुटने लगा",
-    "en": "The twenty-five-year-old daughter-in-law's chest began to choke from the stove's smoke"
+    "hi": "पच्चीस वर्षीय बहू का हृदय चूल्हे के धुएँ से घुटने लगा",
+    "en": "The twenty-five-year-old daughter-in-law's chest began to choke from stove smoke"
   },
   {
     "id": 190,
-    "hi": "मौसी ने चौदह मीठे और तेरह बहुत तीखा पकवान परोसे",
-    "en": "Maternal aunt served fourteen sweet and thirteen very spicy delicacies"
+    "hi": "मौसी ने चौदह मीठे और तेरह बहुत तीखे पकवान परोसे",
+    "en": "Maternal aunt served fourteen sweet and thirteen very spicy dishes"
   },
   {
     "id": 191,
@@ -1041,8 +1041,8 @@
   },
   {
     "id": 209,
-    "hi": "जिस जीवित वीर ने दुश्मन का प्रस्ताव स्वीकार नहीं किया",
-    "en": "The surviving braveheart who did not accept the enemy's proposal"
+    "hi": "जिस जीवित वीर ने दुश्मन का प्रस्ताव कभी स्वीकार नहीं किया",
+    "en": "The living warrior who never accepted the enemy's offer"
   },
   {
     "id": 210,
@@ -1201,8 +1201,8 @@
   },
   {
     "id": 241,
-    "hi": "हवाईअड्डा और थाना के बीच बने सुंदर बगीचा का किराया चुकाओ",
-    "en": "Pay the rent for the lovely garden located between the airport and police station"
+    "hi": "हवाईअड्डा और थाना के बीच बने सुंदर बगीचे का किराया चुकाओ",
+    "en": "Pay the rent for the beautiful garden built between the airport and police station"
   },
   {
     "id": 242,
@@ -1286,8 +1286,8 @@
   },
   {
     "id": 258,
-    "hi": "दौरान बातचीत तुरंत नया तरीका अपनाओ जबकि समय कम है",
-    "en": "Adopt a new method immediately during conversation while time is scarce"
+    "hi": "बातचीत के दौरान तुरंत नया तरीका अपनाओ जबकि समय कम है",
+    "en": "During conversation adopt a new approach immediately while time is short"
   },
   {
     "id": 259,
@@ -1366,8 +1366,8 @@
   },
   {
     "id": 274,
-    "hi": "चौराहा पार करते समय बटुआ और झोला पहिया के नीचे गिरे",
-    "en": "While crossing the crossroads, the purse and tote bag fell under the wheel"
+    "hi": "चौराहा पार करते समय बटुआ और झोला पहिए के नीचे गिरे",
+    "en": "While crossing the intersection, the wallet and bag fell under the wheel"
   },
   {
     "id": 275,
@@ -1381,8 +1381,8 @@
   },
   {
     "id": 277,
-    "hi": "धर्म के अनुसार अन्न तौलना और भूमि मापना कोई फ़र्क नहीं",
-    "en": "According to righteousness, weighing grains and measuring land make no difference"
+    "hi": "धर्म अनुसार अन्न तौलना और भूमि मापना कोई फ़र्क नहीं करता",
+    "en": "Weighing grain and measuring land according to duty makes no difference"
   },
   {
     "id": 278,

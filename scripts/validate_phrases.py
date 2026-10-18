@@ -45,8 +45,15 @@ def get_word_stems(word):
     candidates = {w}
     # Common noun/adjective inflections
     # ा -> े / ों / ियों / ी
-    if w.endswith('ा'):
+    # Nasalized masculine noun inflections (आँ -> एँ / ओं) e.g. कुआँ -> कुएँ, धुआँ -> धुएँ
+    if w.endswith('आँ'):
+        candidates.add(w[:-2] + 'एँ')
+        candidates.add(w[:-2] + 'ओं')
+    elif w.endswith('ा'):
         candidates.add(w[:-1] + 'े')
+        if w.endswith('या'):
+            candidates.add(w[:-2] + 'ए')
+            candidates.add(w[:-2] + 'एं')
         candidates.add(w[:-1] + 'ी')
         candidates.add(w[:-1] + 'ों')
     elif w.endswith('े'):
