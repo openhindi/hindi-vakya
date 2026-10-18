@@ -452,7 +452,7 @@ body {
 
 .chip-hi-text {
   font-family: var(--font-hindi);
-  font-size: 1.25rem;
+  font-size: 0.94rem;
   font-weight: 600;
   color: var(--text-primary);
 }

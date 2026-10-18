@@ -380,7 +380,7 @@
     const wDone = countUniqueWordsCompleted();
 
     // Header Titlebar summary
-    dom.titlebarSentencesCount.textContent = sDone;
+    dom.titlebarSentencesCount.textContent = String(sDone).padStart(4, "0");
 
     // Stats View hero
     dom.statsWordsCount.textContent = wDone;
