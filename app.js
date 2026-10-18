@@ -239,8 +239,6 @@
     }
 
     // The 4 vocabulary words for sentence N are words (4N-3) to (4N)
-    const sId = currentSentence.id;
-    const targetVocabIds = [4 * sId - 3, 4 * sId - 2, 4 * sId - 1, 4 * sId];
     const targetVocabItems = targetVocabIds.map(vid => vocab[vid - 1]).filter(Boolean);
 
     // Target words that match exactly in the sentence
