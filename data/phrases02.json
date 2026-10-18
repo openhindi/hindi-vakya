@@ -511,7 +511,7 @@
   },
   {
     "id": 503,
-    "hi": "हेमंत, तू सुनार से सोने का गर्म चिमटा तुरंत ले आ",
+    "hi": "हेमंत तू सुनार से सोने का गर्म चिमटा तुरंत ले आ",
     "en": "Hemant, you immediately bring the hot tongs from the goldsmith"
   },
   {
@@ -766,12 +766,12 @@
   },
   {
     "id": 554,
-    "hi": "किसान ने मक्का, गेहूँ, सोयाबीन और रूई की अच्छी पैदावार ली",
+    "hi": "किसान ने मक्का गेहूँ सोयाबीन और रूई की अच्छी पैदावार ली",
     "en": "The farmer reaped a good yield of maize, wheat, soybean, and cotton"
   },
   {
     "id": 555,
-    "hi": "ग़ुलामी के दौर में उसने जौ, जई और अनन्नास बेचकर दिन काटे",
+    "hi": "ग़ुलामी के दौर में उसने जौ जई और अनन्नास बेचकर दिन काटे",
     "en": "During the era of slavery, he spent his days selling barley, oats, and pineapple"
   },
   {
@@ -846,7 +846,7 @@
   },
   {
     "id": 570,
-    "hi": "बवंडर, मलेरिया और बधिरता से जूझते हुए उसने यह सूक्ति दोहराई",
+    "hi": "बवंडर मलेरिया और बधिरता से जूझते हुए उसने यह सूक्ति दोहराई",
     "en": "Struggling with tornado, malaria, and deafness, he repeated this aphorism"
   },
   {
@@ -1151,7 +1151,7 @@
   },
   {
     "id": 631,
-    "hi": "विद्वानों के गण ने भूमिति, त्रिकोणमिति और तर्कशास्त्र की गहरी चर्चा की",
+    "hi": "विद्वानों के गण ने भूमिति त्रिकोणमिति और तर्कशास्त्र की गहरी चर्चा की",
     "en": "The assembly of scholars held a profound discussion on geometry, trigonometry, and logic"
   },
   {
@@ -1161,12 +1161,12 @@
   },
   {
     "id": 633,
-    "hi": "मस्तक, कलाई, कुहनी और प्लीहा की चोटें डॉक्टर ने तुरंत जाँचीं",
+    "hi": "मस्तक कलाई कुहनी और प्लीहा की चोटें डॉक्टर ने तुरंत जाँचीं",
     "en": "The doctor immediately examined the injuries on the forehead, wrist, elbow, and spleen"
   },
   {
     "id": 634,
-    "hi": "गर्भावस्था के दौरान नाभिनाल में संक्रमण, मोटापा और कोढ़ जैसी समस्याएं उभरीं",
+    "hi": "गर्भावस्था के दौरान नाभिनाल में संक्रमण मोटापा और कोढ़ जैसी समस्याएं उभरीं",
     "en": "During pregnancy, complications such as umbilical cord infection, obesity, and leprosy emerged"
   },
   {
@@ -1181,7 +1181,7 @@
   },
   {
     "id": 637,
-    "hi": "अगरचे अधिमास आ गया, फिर भी उत्तम आचार की अभिलाषा बनी रही",
+    "hi": "अगरचे अधिमास आ गया फिर भी उत्तम आचार की अभिलाषा बनी रही",
     "en": "Although the leap month arrived, the desire for virtuous conduct persisted"
   },
   {
@@ -1191,7 +1191,7 @@
   },
   {
     "id": 639,
-    "hi": "इस इलाक़ा में आहिस्ता-आहिस्ता कठिन इम्तहान से भारी इज़ाफ़ा हुआ",
+    "hi": "इस इलाक़ा में आहिस्ता आहिस्ता कठिन इम्तहान से भारी इज़ाफ़ा हुआ",
     "en": "In this region, the tough examination gradually caused a huge increase"
   },
   {
@@ -1211,7 +1211,7 @@
   },
   {
     "id": 643,
-    "hi": "गप मारकर समय गँवाना छोड़ो, वरना गंद और गरज दोनों सहोगे",
+    "hi": "गप मारकर समय गँवाना छोड़ो वरना गंद और गरज दोनों सहोगे",
     "en": "Stop wasting time gossiping, otherwise you will endure both the stink and the thunder"
   },
   {
@@ -1226,7 +1226,7 @@
   },
   {
     "id": 646,
-    "hi": "नागरिकता के कागज़ देखकर मत घबराना, यह ग़लतफ़हमी शीघ्र चमकने लगेगी",
+    "hi": "नागरिकता के कागज़ देखकर मत घबराना यह ग़लतफ़हमी शीघ्र चमकने लगेगी",
     "en": "Do not panic upon seeing citizenship papers, this misunderstanding will quickly shine clearly"
   },
   {
@@ -1786,7 +1786,7 @@
   },
   {
     "id": 758,
-    "hi": "शाह के साये में राजभाषा और अलंकारशास्त्र फले-फूले",
+    "hi": "शाह के साये में राजभाषा और अलंकारशास्त्र फले फूले",
     "en": "Under the shadow of the king, the official language and rhetoric flourished"
   },
   {
@@ -1916,7 +1916,7 @@
   },
   {
     "id": 784,
-    "hi": "उत्तराधिकारी की मूर्खता से पादटिप्पणी में संबंध-विच्छेद हुआ",
+    "hi": "उत्तराधिकारी की मूर्खता से पादटिप्पणी में संबंध विच्छेद हुआ",
     "en": "Due to the heir's folly, a rupture occurred in the footnote"
   },
   {
@@ -1971,7 +1971,7 @@
   },
   {
     "id": 795,
-    "hi": "समिति को फ़ौरन कण-कण से जलन होने लगी",
+    "hi": "समिति को फ़ौरन कण कण से जलन होने लगी",
     "en": "The committee immediately began to feel jealousy from every speck"
   },
   {

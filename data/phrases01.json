@@ -36,7 +36,7 @@
   },
   {
     "id": 8,
-    "hi": "हाँ, इस सच्चे मित्र के साथ चलने से सब ठीक हो जाएगा",
+    "hi": "हाँ इस सच्चे मित्र के साथ चलने से सब ठीक हो जाएगा",
     "en": "Yes, everything will be fine by walking with this true friend"
   },
   {
@@ -106,7 +106,7 @@
   },
   {
     "id": 22,
-    "hi": "अरे ओह, मुख्य द्वार का अचानक बंद हो जाना बहुत अजीब लगा",
+    "hi": "अरे ओह मुख्य द्वार का अचानक बंद हो जाना बहुत अजीब लगा",
     "en": "Oh goodness, the sudden closing of the main gate felt very strange"
   },
   {
@@ -131,7 +131,7 @@
   },
   {
     "id": 27,
-    "hi": "कृपया इस बार नीचे बैठकर भोजन ग्रहण कीजिए, आपका बहुत धन्यवाद",
+    "hi": "कृपया इस बार नीचे बैठकर भोजन ग्रहण कीजिए आपका बहुत धन्यवाद",
     "en": "Please sit downstairs this time and take your meal, thank you very much"
   },
   {
@@ -201,7 +201,7 @@
   },
   {
     "id": 41,
-    "hi": "खैर, मेरी सहेली छत के ऊपर अपना नया चित्र बना रही थी",
+    "hi": "खैर मेरी सहेली छत के ऊपर अपना नया चित्र बना रही थी",
     "en": "Well anyway, my friend was painting her new portrait on top of the roof"
   },
   {
@@ -281,7 +281,7 @@
   },
   {
     "id": 57,
-    "hi": "अरे यार, दूसरे की भूल पर इतना ध्यान मत दो",
+    "hi": "अरे यार दूसरे की भूल पर इतना ध्यान मत दो",
     "en": "Hey friend, do not pay so much attention to someone else's mistake"
   },
   {
@@ -291,7 +291,7 @@
   },
   {
     "id": 59,
-    "hi": "आह, उसका पूरा जीवन अब बिल्कुल बदल चुका है",
+    "hi": "आह उसका पूरा जीवन अब बिल्कुल बदल चुका है",
     "en": "Ah, his entire life has now completely changed"
   },
   {
@@ -301,12 +301,12 @@
   },
   {
     "id": 61,
-    "hi": "वाह, आपने पानी का पूरा भुगतान मुझ से ही कराया",
+    "hi": "वाह आपने पानी का पूरा भुगतान मुझ से ही कराया",
     "en": "Wow, you made me pay the entire bill for water"
   },
   {
     "id": 62,
-    "hi": "महोदय, आग की थोड़ी सी भी चिंता मत कीजिए",
+    "hi": "महोदय आग की थोड़ी सी भी चिंता मत कीजिए",
     "en": "Sir, please do not worry even a little about the fire"
   },
   {
@@ -331,7 +331,7 @@
   },
   {
     "id": 67,
-    "hi": "हे वत्स, कल सुबह यहाँ आना तुम्हारा पक्का वादा था",
+    "hi": "हे वत्स कल सुबह यहाँ आना तुम्हारा पक्का वादा था",
     "en": "O dear child, coming here tomorrow morning was your firm promise"
   },
   {
@@ -371,12 +371,12 @@
   },
   {
     "id": 75,
-    "hi": "आर-पार के युद्ध में संगीत ही शांति का एकमात्र रास्ता था",
+    "hi": "आर पार के युद्ध में संगीत ही शांति का एकमात्र रास्ता था",
     "en": "In an all-out war, music was the only path to peace"
   },
   {
     "id": 76,
-    "hi": "हमारा पैसा कहाँ खर्च हुआ, कृपया उसका सच बताना जारी रखें",
+    "hi": "हमारा पैसा कहाँ खर्च हुआ कृपया उसका सच बताना जारी रखें",
     "en": "Please keep telling the truth about where our money was spent"
   },
   {
@@ -416,7 +416,7 @@
   },
   {
     "id": 84,
-    "hi": "प्रिय मित्र, कहीं यह मज़ाक हमारे संबंध को ख़त्म न कर दे",
+    "hi": "प्रिय मित्र कहीं यह मज़ाक हमारे संबंध को ख़त्म न कर दे",
     "en": "Dear friend, may this joke not end our relationship somewhere"
   },
   {
@@ -746,7 +746,7 @@
   },
   {
     "id": 150,
-    "hi": "महाराष्ट्र, राजस्थान और बिहार की ओर उँगली उठाकर मत बोलो",
+    "hi": "महाराष्ट्र राजस्थान और बिहार की ओर उँगली उठाकर मत बोलो",
     "en": "Do not speak pointing fingers towards Maharashtra, Rajasthan, and Bihar"
   },
   {
@@ -891,7 +891,7 @@
   },
   {
     "id": 179,
-    "hi": "तमिलनाडु में ग्यारह जड़ी-बूटी की हरी पत्ती पीसने की क्रिया सीखी",
+    "hi": "तमिलनाडु में ग्यारह जड़ी बूटी की हरी पत्ती पीसने की क्रिया सीखी",
     "en": "In Tamil Nadu, the process of grinding the green leaf of eleven herbs was learned"
   },
   {
@@ -981,7 +981,7 @@
   },
   {
     "id": 197,
-    "hi": "ताला तोड़कर चोरों ने सेब, मक्खन और ब्याज का पैसा चुराया",
+    "hi": "ताला तोड़कर चोरों ने सेब मक्खन और ब्याज का पैसा चुराया",
     "en": "Breaking the lock, thieves stole apples, butter, and interest money"
   },
   {
@@ -1241,7 +1241,7 @@
   },
   {
     "id": 249,
-    "hi": "दर्जी, माली, चित्रकार और रसोइया सब मिलकर राजमहल सजा रहे हैं",
+    "hi": "दर्जी माली चित्रकार और रसोइया सब मिलकर राजमहल सजा रहे हैं",
     "en": "The tailor, gardener, painter, and cook are all decorating the royal palace together"
   },
   {
@@ -1561,7 +1561,7 @@
   },
   {
     "id": 313,
-    "hi": "ज्वालामुखी राख, कीटनाशक और शल्यचिकित्सा से शरीर की दुर्बलता मिटाओ",
+    "hi": "ज्वालामुखी राख कीटनाशक और शल्यचिकित्सा से शरीर की दुर्बलता मिटाओ",
     "en": "Overcome the body's debility with volcanic ash, pesticide, and surgery"
   },
   {
@@ -1576,17 +1576,17 @@
   },
   {
     "id": 316,
-    "hi": "उसने धोती, पायजामा, पगड़ी और गर्म शाल सँभालकर रखी",
+    "hi": "उसने धोती पायजामा पगड़ी और गर्म शाल सँभालकर रखी",
     "en": "He carefully kept the dhoti, pyjama, turban, and warm shawl"
   },
   {
     "id": 317,
-    "hi": "छोटा बछड़ा कंगन, पायल और झुमका देखकर खुशी से उछला",
+    "hi": "छोटा बछड़ा कंगन पायल और झुमका देखकर खुशी से उछला",
     "en": "The little calf jumped with joy upon seeing the bangle, anklet, and earring"
   },
   {
     "id": 318,
-    "hi": "गिलहरी, छिपकली, जुगनू और बिच्छू दीवार के पास दिखे",
+    "hi": "गिलहरी छिपकली जुगनू और बिच्छू दीवार के पास दिखे",
     "en": "A squirrel, lizard, firefly, and scorpion were seen near the wall"
   },
   {
@@ -1661,7 +1661,7 @@
   },
   {
     "id": 333,
-    "hi": "अमीर कला-प्रेमी ने नए प्रस्ताव पर वैज्ञानिक प्रयोग किया",
+    "hi": "अमीर कला प्रेमी ने नए प्रस्ताव पर वैज्ञानिक प्रयोग किया",
     "en": "The wealthy art lover conducted a scientific experiment on the new proposal"
   },
   {
@@ -1696,12 +1696,12 @@
   },
   {
     "id": 340,
-    "hi": "खटमल, जूं, टिड्डी और केंचुआ मिट्टी में रेंग रहे थे",
+    "hi": "खटमल जूं टिड्डी और केंचुआ मिट्टी में रेंग रहे थे",
     "en": "The bedbug, louse, locust, and earthworm were crawling in the soil"
   },
   {
     "id": 341,
-    "hi": "पारिस्थितिकी में अणु, चुंबक और कोशिका का गहरा संबंध है",
+    "hi": "पारिस्थितिकी में अणु चुंबक और कोशिका का गहरा संबंध है",
     "en": "In ecology, atom, magnet, and cell share an intimate relationship"
   },
   {
@@ -1711,7 +1711,7 @@
   },
   {
     "id": 343,
-    "hi": "वृत्त के बीच तबला, सितार और बाँसुरी की धुन गूँजी",
+    "hi": "वृत्त के बीच तबला सितार और बाँसुरी की धुन गूँजी",
     "en": "Within the circle resonated the melodies of the tabla, sitar, and flute"
   },
   {
@@ -1886,12 +1886,12 @@
   },
   {
     "id": 378,
-    "hi": "बडबडाना छोड़कर फूल सूँघना, बीज बोना और खुशबू बिखेरना सीखो",
+    "hi": "बडबडाना छोड़कर फूल सूँघना बीज बोना और खुशबू बिखेरना सीखो",
     "en": "Stop murmuring, and learn to smell flowers, sow seeds, and scatter fragrance"
   },
   {
     "id": 379,
-    "hi": "गाय का चरना देखकर उसने वंदना की, फिर माँजना और पोतना किया",
+    "hi": "गाय का चरना देखकर उसने वंदना की फिर माँजना और पोतना किया",
     "en": "Watching the cow graze, he prayed, then washed and mopped"
   },
   {
