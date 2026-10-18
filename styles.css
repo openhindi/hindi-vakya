@@ -468,7 +468,7 @@ body {
   display: block;
 }
 
-/* Orange highlight for the 4 target vocabulary words when hint is active */
+/* Orange highlight for exact target vocabulary words when hint is active */
 .show-hints .word-chip.target-vocab {
   border-color: #f97316;
   background: rgba(249, 115, 22, 0.1);
@@ -482,6 +482,48 @@ body {
   color: #fdba74;
 }
 
+/* Violet highlight for selectable inflected target words in the sentence (no meaning shown) */
+.show-hints .word-chip.inflected-vocab {
+  border-color: #a855f7;
+  background: rgba(168, 85, 247, 0.15);
+}
+
+.show-hints .word-chip.inflected-vocab .chip-hi-text {
+  color: #c084fc;
+}
+
+/* Grey-shaded violet reference chips for original uninflected vocab words (cannot be selected) */
+.ref-vocab-chip {
+  display: none !important;
+}
+
+.show-hints .ref-vocab-chip {
+  display: flex !important;
+  border-color: #6b5b7b;
+  background: rgba(107, 91, 123, 0.18);
+  cursor: default;
+  border-style: dashed;
+  user-select: none;
+  opacity: 0.82;
+}
+
+.show-hints .ref-vocab-chip:hover {
+  border-color: #6b5b7b;
+}
+
+.show-hints .ref-vocab-chip:active {
+  transform: none;
+}
+
+.show-hints .ref-vocab-chip .chip-hi-text {
+  color: #9d8db0;
+}
+
+.show-hints .ref-vocab-chip .chip-en-gloss {
+  display: block;
+  color: #88789c;
+}
+
 @media (prefers-color-scheme: light) {
   .show-hints .word-chip.target-vocab {
     border-color: #ea580c;
@@ -492,6 +534,25 @@ body {
   }
   .show-hints .word-chip.target-vocab .chip-en-gloss {
     color: #9a3412;
+  }
+
+  .show-hints .word-chip.inflected-vocab {
+    border-color: #9333ea;
+    background: rgba(147, 51, 234, 0.1);
+  }
+  .show-hints .word-chip.inflected-vocab .chip-hi-text {
+    color: #7e22ce;
+  }
+
+  .show-hints .ref-vocab-chip {
+    border-color: #8c7c9e;
+    background: rgba(140, 124, 158, 0.12);
+  }
+  .show-hints .ref-vocab-chip .chip-hi-text {
+    color: #5c4c6e;
+  }
+  .show-hints .ref-vocab-chip .chip-en-gloss {
+    color: #6c5c7e;
   }
 }
 

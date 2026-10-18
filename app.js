@@ -211,15 +211,29 @@
     // English text
     dom.enSentenceText.textContent = currentSentence.en;
 
-    // Pick 1-2 distractor words from a different sentence
+    // Pick 1-2 distractor words directly from vocab.json (not present in current sentence or target vocab)
     const words = currentSentence.words;
+    const currentWordsSet = new Set(words);
+    const targetVocabIds = [4 * currentSentence.id - 3, 4 * currentSentence.id - 2, 4 * currentSentence.id - 1, 4 * currentSentence.id];
+    const targetVocabWords = new Set(targetVocabIds.map(vid => vocab[vid - 1]?.hi.trim()).filter(Boolean));
+
     const distractorCandidates = [];
-    const otherSentence = sentences[(index + 7) % sentences.length];
-    if (otherSentence) {
-      for (const dw of otherSentence.words) {
-        if (!words.includes(dw) && !distractorCandidates.includes(dw)) {
-          distractorCandidates.push(dw);
-          if (distractorCandidates.length >= 2) break;
+    const distractorCount = Math.floor(Math.random() * 2) + 1; // 1 or 2 distractors
+    let attempts = 0;
+
+    while (distractorCandidates.length < distractorCount && attempts < 100) {
+      attempts++;
+      const randomIdx = Math.floor(Math.random() * vocab.length);
+      const candidateItem = vocab[randomIdx];
+      if (candidateItem && candidateItem.hi && candidateItem.en) {
+        const cWord = candidateItem.hi.trim();
+        if (!currentWordsSet.has(cWord) &&
+            !targetVocabWords.has(cWord) &&
+            !distractorCandidates.some(d => d.hi === cWord)) {
+          distractorCandidates.push({
+            hi: cWord,
+            en: candidateItem.en.trim()
+          });
         }
       }
     }
@@ -229,126 +243,75 @@
     const targetVocabIds = [4 * sId - 3, 4 * sId - 2, 4 * sId - 1, 4 * sId];
     const targetVocabItems = targetVocabIds.map(vid => vocab[vid - 1]).filter(Boolean);
 
-    /**
-     * Generates the precise set of allowed inflections for a target Hindi root word,
-     * mirroring scripts/validate_phrases.py.
-     */
-    function getWordInflections(rawWord) {
-      const w = rawWord.trim();
-      const candidates = new Set([w]);
+    // Target words that match exactly in the sentence
+    const sentenceWordSet = new Set(words);
 
-      // 1. Common noun / adjective inflections (-ा, -े, -ी)
-      if (w.endsWith("ा")) {
-        const base = w.slice(0, -1);
-        candidates.add(base + "े");
-        candidates.add(base + "ी");
-        candidates.add(base + "ों");
-      } else if (w.endsWith("े")) {
-        const base = w.slice(0, -1);
-        candidates.add(base + "ा");
-        candidates.add(base + "ी");
-        candidates.add(base + "ों");
-      } else if (w.endsWith("ी")) {
-        const base = w.slice(0, -1);
-        candidates.add(base + "ा");
-        candidates.add(base + "े");
-        candidates.add(base + "ियों");
-        candidates.add(base + "ियाँ");
+    // Missing target vocab words (ones not present in exact root form)
+    const missingVocabItems = targetVocabItems.filter(tv => !sentenceWordSet.has(tv.hi.trim()));
+
+    // Common irregular forms helper
+    const irregulars = {
+      "जाना": ["गया", "गई", "गए", "जा", "जाता", "जाती", "जाते", "जाइए", "जाओ"],
+      "करना": ["किया", "की", "किए", "कर", "करता", "करती", "करते", "कीजिए", "करो"],
+      "होना": ["था", "थी", "थे", "थीं", "हो", "होता", "होती", "होते", "हुए", "हुआ", "हुई", "होगा", "होगी", "होंगे"],
+      "देना": ["दिया", "दी", "दिए", "दे", "देता", "देती", "देते", "दीजिए", "दो"],
+      "लेना": ["लिया", "ली", "लिए", "ले", "लेता", "लेती", "लेते", "लीजिए", "लो"]
+    };
+
+    function isInflectionOf(token, root) {
+      if (token === root) return false;
+      if (irregulars[root] && irregulars[root].includes(token)) return true;
+      let base = root;
+      if (root.endsWith("ना")) {
+        base = root.slice(0, -2);
+      } else if (root.endsWith("ा") || root.endsWith("े") || root.endsWith("ी")) {
+        base = root.slice(0, -1);
       }
-
-      // 2. Common verb inflections (-ना ending)
-      if (w.endsWith("ना")) {
-        const root = w.slice(0, -2);
-        [
-          root,
-          root + "ा", root + "ी", root + "े",
-          root + "ता", root + "ती", root + "ते",
-          root + "कर", root + "के",
-          root + "ूंगा", root + "ऊँगा", root + "एगी", root + "एगा", root + "एंगे",
-          root + "ाया", root + "ाई", root + "ाए"
-        ].forEach(f => candidates.add(f));
-
-        if (root.endsWith("ा")) {
-          const shortRoot = root.slice(0, -1);
-          [
-            shortRoot + "ाया", shortRoot + "ाई", shortRoot + "ाए",
-            shortRoot + "ाकर", shortRoot + "ाते"
-          ].forEach(f => candidates.add(f));
-        }
-      }
-
-      // 3. Irregular forms
-      const irregulars = {
-        "जाना": ["गया", "गई", "गए", "जा", "जाता", "जाती", "जाते", "जाइए", "जाओ", "जाएँ", "जाएगा", "जाएगी", "जाएंगे"],
-        "करना": ["किया", "की", "किए", "कर", "करता", "करती", "करते", "कीजिए", "करो", "करें", "करेगा", "करेगी", "करेंगे"],
-        "होना": ["था", "थी", "थे", "थीं", "हो", "होता", "होती", "होते", "हुए", "हुआ", "हुई", "होगा", "होगी", "होंगे"],
-        "देना": ["दिया", "दी", "दिए", "दे", "देता", "देती", "देते", "दीजिए", "दो", "दें", "देगा", "देगी", "देंगे"],
-        "लेना": ["लिया", "ली", "लिए", "ले", "लेता", "लेती", "लेते", "लीजिए", "लो", "लें", "लेगा", "लेगी", "लेंगे"]
-      };
-      if (irregulars[w]) {
-        irregulars[w].forEach(f => candidates.add(f));
-      }
-
-      // 4. Common plural/postposition attached forms
-      candidates.add(w + "ों");
-      candidates.add(w + "ें");
-      if (w === "को") candidates.add("सबको");
-
-      return candidates;
+      if (base.length >= 2 && token.startsWith(base)) return true;
+      if (token.startsWith(root)) return true;
+      return false;
     }
 
-    /**
-     * Resolves if a given word token in the sentence corresponds to one of the 4 target vocabulary items.
-     * Checks exact match first, then strict candidate inflection set.
-     */
-    function resolveTargetWordInfo(word) {
-      if (!word) return { isTarget: false, isInflected: false, baseWord: "", meaning: "" };
-      const w = word.trim();
-
-      // Priority 1: Exact root match
-      for (const tv of targetVocabItems) {
-        if (w === tv.hi.trim()) {
-          return { isTarget: true, isInflected: false, baseWord: tv.hi.trim(), meaning: tv.en.trim() };
+    // Set of tokens in sentence that represent inflected forms of missing target words
+    const inflectedTargetTokens = new Set();
+    missingVocabItems.forEach(tv => {
+      const root = tv.hi.trim();
+      words.forEach(w => {
+        if (isInflectionOf(w, root)) {
+          inflectedTargetTokens.add(w);
         }
-      }
+      });
+    });
 
-      // Priority 2: Strict inflection set match
-      for (const tv of targetVocabItems) {
-        const root = tv.hi.trim();
-        const allowedForms = getWordInflections(root);
-        if (allowedForms.has(w)) {
-          return { isTarget: true, isInflected: (w !== root), baseWord: root, meaning: tv.en.trim() };
-        }
-      }
-
-      return { isTarget: false, isInflected: false, baseWord: "", meaning: getWordMeaning(w) };
-    }
+    const targetHiSet = new Set(targetVocabItems.map(tv => tv.hi.trim()));
 
     const pool = words.map((w, idx) => {
-      const info = resolveTargetWordInfo(w);
+      const isExactTarget = targetHiSet.has(w);
+      const isInflected = inflectedTargetTokens.has(w);
+
       return {
         word: w,
         origIndex: idx,
         isDistractor: false,
-        isTargetVocab: info.isTarget,
-        isInflected: info.isInflected,
-        baseWord: info.baseWord,
-        meaning: info.meaning || getWordMeaning(w)
+        isTargetVocab: isExactTarget,
+        isInflectedTarget: isInflected,
+        // No meaning shown for inflected form in the hint!
+        meaning: isInflected ? "" : getWordMeaning(w)
       };
     }).concat(distractorCandidates.map((dw, dIdx) => ({
-      word: dw,
+      word: dw.hi,
       origIndex: -100 - dIdx,
       isDistractor: true,
       isTargetVocab: false,
-      isInflected: false,
-      baseWord: "",
-      meaning: getWordMeaning(dw)
+      isInflectedTarget: false,
+      // Meaning taken directly from vocab.json!
+      meaning: dw.en
     })));
 
     shuffledPool = shuffle(pool);
 
     renderSlots();
-    renderChips();
+    renderChips(missingVocabItems);
   }
 
   function renderSlots() {
@@ -371,25 +334,37 @@
     }).join("");
   }
 
-  function renderChips() {
-    // English gloss hint and target-vocab highlight is rendered here in chips area only
-    dom.bridgeChips.innerHTML = shuffledPool.map((item, i) => {
+  function renderChips(missingVocabItems = []) {
+    // 1. Playable word chips:
+    // - Exact target words: orange (.target-vocab)
+    // - Inflected target words: violet (.inflected-vocab), no meaning shown
+    const playableChipsHtml = shuffledPool.map((item, i) => {
       const isUsed = !item.isDistractor && placedIndices.includes(item.origIndex);
-      const isTarget = item.isTargetVocab ? "target-vocab" : "";
-      
-      // When inflected, show which base word it refers to, e.g. "is (from होना)" or "went (from जाना)"
-      let glossText = item.meaning || "";
-      if (item.isTargetVocab && item.isInflected && item.baseWord) {
-        glossText = `${glossText} (${item.baseWord})`;
+      let specialClass = "";
+      if (item.isTargetVocab) {
+        specialClass = "target-vocab";
+      } else if (item.isInflectedTarget) {
+        specialClass = "inflected-vocab";
       }
 
       return `
-        <button type="button" class="word-chip ${isUsed ? 'used' : ''} ${isTarget}" data-chip-idx="${i}">
+        <button type="button" class="word-chip ${isUsed ? 'used' : ''} ${specialClass}" data-chip-idx="${i}">
           <span class="chip-hi-text">${item.word}</span>
-          <span class="chip-en-gloss">${glossText}</span>
+          ${item.meaning ? `<span class="chip-en-gloss">${item.meaning}</span>` : ''}
         </button>
       `;
     }).join("");
+
+    // 2. Unselectable original words in grey-shaded violet (.ref-vocab-chip)
+    // Shown only when hint is toggled (.show-hints), cannot be clicked
+    const refChipsHtml = missingVocabItems.map(ref => `
+      <div class="word-chip ref-vocab-chip" title="Original vocabulary word: ${ref.hi}" aria-disabled="true">
+        <span class="chip-hi-text">${ref.hi}</span>
+        <span class="chip-en-gloss">${ref.en}</span>
+      </div>
+    `).join("");
+
+    dom.bridgeChips.innerHTML = playableChipsHtml + refChipsHtml;
   }
 
   function handleChipClick(chipIdx, chipEl) {
