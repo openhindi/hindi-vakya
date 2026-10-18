@@ -25,6 +25,7 @@
   let currentSentence = null;
   let placedIndices = []; // array of original indices in sentence.words
   let shuffledPool = []; // array of { word, origIndex, isDistractor, meaning }
+  let currentMissingVocabItems = []; // stores uninflected target vocab words for hint reference chips
   let roundCompleted = false;
 
   // Stats table state
@@ -118,14 +119,24 @@
   }
 
   async function initData() {
-    const [vocabData, phrases1, phrases2, phrases3] = await Promise.all([
+    const [vocabData, dictData, phrases1, phrases2, phrases3] = await Promise.all([
       fetchJson("data/vocab.json"),
+      fetchJson("data/dict.json").catch(() => ({})),
       fetchJson("data/phrases01.json"),
       fetchJson("data/phrases02.json"),
       fetchJson("data/phrases03.json")
     ]);
 
     vocab = vocabData;
+
+    // Load words from data/dict.json (sentence words not in vocab.json)
+    if (dictData && typeof dictData === "object") {
+      Object.entries(dictData).forEach(([hi, en]) => {
+        if (hi && en) vocabMap.set(hi.trim(), String(en).trim());
+      });
+    }
+
+    // vocab.json entries take priority
     vocab.forEach(v => {
       if (v.hi && v.en) {
         vocabMap.set(v.hi.trim(), v.en.trim());
@@ -245,63 +256,25 @@
     const sentenceWordSet = new Set(words);
 
     // Missing target vocab words (ones not present in exact root form)
-    const missingVocabItems = targetVocabItems.filter(tv => !sentenceWordSet.has(tv.hi.trim()));
-
-    // Common irregular forms helper
-    const irregulars = {
-      "जाना": ["गया", "गई", "गए", "जा", "जाता", "जाती", "जाते", "जाइए", "जाओ"],
-      "करना": ["किया", "की", "किए", "कर", "करता", "करती", "करते", "कीजिए", "करो"],
-      "होना": ["था", "थी", "थे", "थीं", "हो", "होता", "होती", "होते", "हुए", "हुआ", "हुई", "होगा", "होगी", "होंगे"],
-      "देना": ["दिया", "दी", "दिए", "दे", "देता", "देती", "देते", "दीजिए", "दो"],
-      "लेना": ["लिया", "ली", "लिए", "ले", "लेता", "लेती", "लेते", "लीजिए", "लो"]
-    };
-
-    function isInflectionOf(token, root) {
-      if (token === root) return false;
-      if (irregulars[root] && irregulars[root].includes(token)) return true;
-      let base = root;
-      if (root.endsWith("ना")) {
-        base = root.slice(0, -2);
-      } else if (root.endsWith("ा") || root.endsWith("े") || root.endsWith("ी")) {
-        base = root.slice(0, -1);
-      }
-      if (base.length >= 2 && token.startsWith(base)) return true;
-      if (token.startsWith(root)) return true;
-      return false;
-    }
-
-    // Set of tokens in sentence that represent inflected forms of missing target words
-    const inflectedTargetTokens = new Set();
-    missingVocabItems.forEach(tv => {
-      const root = tv.hi.trim();
-      words.forEach(w => {
-        if (isInflectionOf(w, root)) {
-          inflectedTargetTokens.add(w);
-        }
-      });
-    });
+    currentMissingVocabItems = targetVocabItems.filter(tv => !sentenceWordSet.has(tv.hi.trim()));
 
     const targetHiSet = new Set(targetVocabItems.map(tv => tv.hi.trim()));
 
     const pool = words.map((w, idx) => {
       const isExactTarget = targetHiSet.has(w);
-      const isInflected = inflectedTargetTokens.has(w);
 
       return {
         word: w,
         origIndex: idx,
         isDistractor: false,
         isTargetVocab: isExactTarget,
-        isInflectedTarget: isInflected,
-        // No meaning shown for inflected form in the hint!
-        meaning: isInflected ? "" : getWordMeaning(w)
+        meaning: getWordMeaning(w)
       };
     }).concat(distractorCandidates.map((dw, dIdx) => ({
       word: dw.hi,
       origIndex: -100 - dIdx,
       isDistractor: true,
       isTargetVocab: false,
-      isInflectedTarget: false,
       // Meaning taken directly from vocab.json!
       meaning: dw.en
     })));
@@ -309,7 +282,7 @@
     shuffledPool = shuffle(pool);
 
     renderSlots();
-    renderChips(missingVocabItems);
+    renderChips();
   }
 
   function renderSlots() {
@@ -332,18 +305,13 @@
     }).join("");
   }
 
-  function renderChips(missingVocabItems = []) {
+  function renderChips() {
     // 1. Playable word chips:
     // - Exact target words: orange (.target-vocab)
     // - Inflected target words: violet (.inflected-vocab), no meaning shown
     const playableChipsHtml = shuffledPool.map((item, i) => {
       const isUsed = !item.isDistractor && placedIndices.includes(item.origIndex);
-      let specialClass = "";
-      if (item.isTargetVocab) {
-        specialClass = "target-vocab";
-      } else if (item.isInflectedTarget) {
-        specialClass = "inflected-vocab";
-      }
+      const specialClass = item.isTargetVocab ? "target-vocab" : "";
 
       return `
         <button type="button" class="word-chip ${isUsed ? 'used' : ''} ${specialClass}" data-chip-idx="${i}">
@@ -355,7 +323,7 @@
 
     // 2. Unselectable original words in grey-shaded violet (.ref-vocab-chip)
     // Shown only when hint is toggled (.show-hints), cannot be clicked
-    const refChipsHtml = missingVocabItems.map(ref => `
+    const refChipsHtml = currentMissingVocabItems.map(ref => `
       <div class="word-chip ref-vocab-chip" title="Original vocabulary word: ${ref.hi}" aria-disabled="true">
         <span class="chip-hi-text">${ref.hi}</span>
         <span class="chip-en-gloss">${ref.en}</span>
